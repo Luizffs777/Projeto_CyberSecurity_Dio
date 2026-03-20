@@ -1,0 +1,30 @@
+from cryptography.fernet import Fernet
+import os
+
+def carregar_chave():
+    return open("chave.key", "rb").read()
+
+
+def descriptografar_arquivo(arquivo,chave):
+    f = Fernet(chave)
+    with open(arquivo, "rb") as file:
+        dados = file.read()
+        dados__descriptografados = f.decrypt(dados)
+    with open(arquivo, "wb") as file:
+        file.write(dados__descriptografados)
+
+def encontrar_arquivos(diretorio):
+    lista = []
+    for raiz, _, arquivos in os.walk(diretorio):
+        for nome in arquivos:
+            caminho = os.path.join(raiz, nome)
+            if nome != "Ransoware.py" and not nome.endswith(".key"):
+                lista.append(caminho)
+    return lista
+
+def main():
+    chave = carregar_chave()
+    arquivos = encontrar_arquivos("Test__Files")
+    for arquivo in arquivos:
+        descriptografar_arquivo(arquivo, chave)
+    print("Arquivos restaurados com sucesso")
